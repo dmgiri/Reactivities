@@ -1,0 +1,7 @@
+// get all values
+GET http://localhost:5000/api/values HTTP/1.1
+###
+
+// get one value
+GET http://localhost:5000/api/values/3 HTTP/1.1
+###
