@@ -20,7 +20,7 @@ namespace API.Controllers
     public async Task<ActionResult<IEnumerable<Value>>> Get() => await context.Values.ToListAsync();
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<Value>> Get(int id) { return await context.Values.FindAsync(id); }
+    public async Task<ActionResult<Value>> Get(int id) => await context.Values.FindAsync(id);
 
     // POST api/values
     [HttpPost]
