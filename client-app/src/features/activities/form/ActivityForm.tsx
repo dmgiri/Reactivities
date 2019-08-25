@@ -1,15 +1,21 @@
-import React, { useState, FormEvent } from 'react'
+import React, { useContext, useState, FormEvent } from 'react'
 import { Segment, Form, Button } from 'semantic-ui-react'
 import { v4 as uuid} from 'uuid'
 import { IActivity } from '../../../app/models/activity'
+import { observer } from 'mobx-react-lite'
+import ActivityStore from '../../../app/stores/activityStore'
+
 
 type Event = FormEvent<HTMLInputElement> | FormEvent<HTMLTextAreaElement> 
 interface IProps {
-  setEditMode: (editMode: boolean) => void, activity: IActivity, createActivity: (activity: IActivity) => void,
+  setEditMode: (editMode: boolean) => void, activity: IActivity,
   editActivity: (activity: IActivity) => void, submitting: boolean
 }
 
-const ActivityForm: React.FC<IProps> = ({ setEditMode, activity: initialFormState, createActivity, editActivity, submitting }) => {
+const ActivityForm: React.FC<IProps> = ({ setEditMode, activity: initialFormState, editActivity, submitting }) => {
+
+  const activityStore = useContext(ActivityStore)
+  const { createActivity } = activityStore
 
   const initializeForm = () => {
     if (initialFormState) return initialFormState
@@ -17,7 +23,7 @@ const ActivityForm: React.FC<IProps> = ({ setEditMode, activity: initialFormStat
   }
 
   const [activity, setActivity] = useState(initializeForm)
-  const handleChange = (e: Event) => { setActivity({ ...activity, [e.currentTarget.name]: e.currentTarget.value }) }
+  const handleChange = (e: Event) => setActivity({ ...activity, [e.currentTarget.name]: e.currentTarget.value })
   const handleSubmit = () => { 
     if (activity.id.length === 0) { let newActivity = { ...activity, id: uuid() }; createActivity(newActivity) }
     else editActivity(activity)
@@ -39,4 +45,4 @@ const ActivityForm: React.FC<IProps> = ({ setEditMode, activity: initialFormStat
   )
 }
 
-export default ActivityForm
+export default observer(ActivityForm)
