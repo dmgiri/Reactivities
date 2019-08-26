@@ -7,15 +7,12 @@ import ActivityStore from '../../../app/stores/activityStore'
 
 
 type Event = FormEvent<HTMLInputElement> | FormEvent<HTMLTextAreaElement> 
-interface IProps {
-  setEditMode: (editMode: boolean) => void, activity: IActivity,
-  editActivity: (activity: IActivity) => void, submitting: boolean
-}
+interface IProps { activity: IActivity }
 
-const ActivityForm: React.FC<IProps> = ({ setEditMode, activity: initialFormState, editActivity, submitting }) => {
+const ActivityForm: React.FC<IProps> = ({ activity: initialFormState }) => {
 
   const activityStore = useContext(ActivityStore)
-  const { createActivity } = activityStore
+  const { createActivity, editActivity, submitting, cancelFormOpen } = activityStore
 
   const initializeForm = () => {
     if (initialFormState) return initialFormState
@@ -39,7 +36,7 @@ const ActivityForm: React.FC<IProps> = ({ setEditMode, activity: initialFormStat
         <Form.Input placeholder='City' name='city' value={activity.city} onChange={handleChange} />
         <Form.Input placeholder='Venue' name='venue' value={activity.venue} onChange={handleChange} />
         <Button loading={submitting} floated='right' positive type='submit' content='Submit' />
-        <Button floated='right' type='button' content='Cancel' onClick={() => setEditMode(false)}/>
+        <Button floated='right' type='button' content='Cancel' onClick={cancelFormOpen}/>
       </Form>
     </Segment>
   )
