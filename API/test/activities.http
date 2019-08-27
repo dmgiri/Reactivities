@@ -11,13 +11,20 @@ POST http://localhost:5000/api/activities HTTP/1.1
 Content-Type: application/json
 
 {
-  "title": "Niek Jan's Birthday Party",
+  "title": "Irenka's Birthday Party",
   "description": "Happy Birthday to you...",
-  "category": "drinks",
-  "date": "2019-09-02T20:00:00.9433767",
-  "city": "Bernieres",
+  "category": "food",
+  "date": "2019-10-20T20:00:00.9433767",
+  "city": "Kiev",
   "venue": "Home"
 }
+###
+
+// post a new activity
+POST http://localhost:5000/api/activities HTTP/1.1
+Content-Type: application/json
+
+{}
 ###
 
 // edit an activity

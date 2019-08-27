@@ -34,7 +34,7 @@ class ActivityStore {
         this.loadingInitial = false
       })
     }
-    catch (error) { console.log(error); runInAction('loading activities error', () => this.loadingInitial = false) }
+    catch (error) { runInAction('loading activities error', () => this.loadingInitial = false); console.log(error) }
   }
 
   @action
@@ -47,7 +47,7 @@ class ActivityStore {
         activity = await agent.Activities.details(id)
         runInAction('getting activity', () => { this.activity = activity; this.loadingInitial = false })
       }
-      catch (error) { console.log(error); runInAction('get activity error', () =>  this.loadingInitial = false )}
+      catch (error) { runInAction('get activity error', () => this.loadingInitial = false); console.log(error) }
   }}
 
   @action clearActivity = () => this.activity = null

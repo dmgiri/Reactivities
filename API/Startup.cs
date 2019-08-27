@@ -7,6 +7,8 @@ using Microsoft.EntityFrameworkCore;
 using Persistence;
 using MediatR;
 using Application.Activities;
+using FluentValidation.AspNetCore;
+using API.Middleware;
 
 namespace API
 {
@@ -20,15 +22,20 @@ namespace API
       services.AddDbContext<DataContext>(opt => { opt.UseSqlite(Configuration.GetConnectionString("DefaultConnection")); });
       services.AddCors(opt => opt.AddPolicy("CorsPolicy", policy => { policy.AllowAnyHeader().AllowAnyMethod().WithOrigins("http://localhost:3000"); }));
       services.AddMediatR(typeof(List.Handler).Assembly);
-      services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+      services.AddMvc()
+        .AddFluentValidation(cfg => cfg.RegisterValidatorsFromAssemblyContaining<Create>())
+        .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
     }
 
     public void Configure(IApplicationBuilder app, IHostingEnvironment env)
     {
-      if (env.IsDevelopment()) { app.UseDeveloperExceptionPage(); } else {}  // app.UseHsts();
-      // app.UseHttpsRedirection();
+      app.UseMiddleware<ErrorHandlingMiddleware>();
       app.UseCors("CorsPolicy");
       app.UseMvc();
     }
   }
 }
+
+// notes:
+// if (env.IsDevelopment()) { app.UseDeveloperExceptionPage(); } else {}  // app.UseHsts(); 
+// app.UseHttpsRedirection();
