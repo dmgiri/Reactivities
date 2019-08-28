@@ -3,7 +3,9 @@ import { RouteComponentProps } from 'react-router-dom'
 import { Segment, Form, Button, Grid } from 'semantic-ui-react'
 import { v4 as uuid} from 'uuid'
 import { observer } from 'mobx-react-lite'
+import { Form as FinalForm, Field } from 'react-final-form'
 import ActivityStore from '../../../app/stores/activityStore'
+import TextInput from '../../../app/common/form/TextInput'
 
 
 type Event = FormEvent<HTMLInputElement> | FormEvent<HTMLTextAreaElement> 
@@ -20,28 +22,31 @@ const ActivityForm: React.FC<RouteComponentProps<DetailParams>> = ({ match, hist
     return function cleanup() { clearActivity() }
   }, [loadActivity, match.params.id, activity.id.length, initialFormState, clearActivity])
 
-  const handleChange = (e: Event) => setActivity({ ...activity, [e.currentTarget.name]: e.currentTarget.value })
-  const handleSubmit = () => { 
-    if (activity.id.length === 0) {
-      let newActivity = { ...activity, id: uuid() }; createActivity(newActivity); history.push(`/activities/${newActivity.id}`)
-    }
-    else { editActivity(activity); history.push(`/activities/${activity.id}`) }
-  }
+  const handleFinalFormSubmit = (values: any) => { console.log(values) }
+  // const handleSubmit = () => { 
+  //   if (activity.id.length === 0) {
+  //     let newActivity = { ...activity, id: uuid() }; createActivity(newActivity); history.push(`/activities/${newActivity.id}`)
+  //   }
+  //   else { editActivity(activity); history.push(`/activities/${activity.id}`) }
+  // }
+
 
   return (
     <Grid>
       <Grid.Column width={10}>
         <Segment clearing>
-          <Form onSubmit={handleSubmit}>
-            <Form.Input placeholder='Title' name='title' value={activity.title} onChange={handleChange} />
-            <Form.TextArea rows={2} placeholder='Description' name='description' value={activity.description} onChange={handleChange} />
-            <Form.Input placeholder='Category' name='category' value={activity.category} onChange={handleChange} />
-            <Form.Input type='datetime-local' placeholder='Date' name='date' value={activity.date} onChange={handleChange} />
-            <Form.Input placeholder='City' name='city' value={activity.city} onChange={handleChange} />
-            <Form.Input placeholder='Venue' name='venue' value={activity.venue} onChange={handleChange} />
-            <Button loading={submitting} floated='right' positive type='submit' content='Submit' />
-            <Button floated='right' type='button' content='Cancel' onClick={() => history.push('/activities')}/>
-          </Form>
+          <FinalForm onSubmit={handleFinalFormSubmit} render={({ handleSubmit }) => (
+            <Form onSubmit={handleSubmit}>
+              <Field placeholder='Title' name='title' value={activity.title} component={TextInput} />
+              <Field placeholder='Description' name='description' value={activity.description} component={TextInput} />
+              <Field placeholder='Category' name='category' value={activity.category} component={TextInput} />
+              <Field placeholder='Date' name='date' value={activity.date} component={TextInput} />
+              <Field placeholder='City' name='city' value={activity.city} component={TextInput} />
+              <Field placeholder='Venue' name='venue' value={activity.venue} component={TextInput} />
+              <Button loading={submitting} floated='right' positive type='submit' content='Submit' />
+              <Button floated='right' type='button' content='Cancel' onClick={() => history.push('/activities')}/>
+            </Form>
+          )} />
         </Segment>
       </Grid.Column>
     </Grid>
