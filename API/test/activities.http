@@ -3,7 +3,7 @@ GET http://localhost:5000/api/activities HTTP/1.1
 ###
 
 // get one activity
-GET http://localhost:5000/api/activities/3fd43847-6fc0-40e6-9413-8fa516f2102a HTTP/1.1
+GET http://localhost:5000/api/activities/05509eb9-66a0-4def-a05a-95656fad3167 HTTP/1.1
 ###
 
 // post a new activity

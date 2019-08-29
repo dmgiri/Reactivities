@@ -1,34 +1,29 @@
 using System;
 using MediatR;
 using System.Threading.Tasks;
-using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 using Domain;
 using Application.Activities;
 
 
 namespace API.Controllers
 {
-  [Route("api/[controller]")]
-  [ApiController]
-  public class ActivitiesController : ControllerBase
+  public class ActivitiesController : BaseController
   {
-    private readonly IMediator mediator;
-    public ActivitiesController(IMediator Mediator) { this.mediator = Mediator; }
-
     [HttpGet]
-    public async Task<ActionResult<List<Activity>>> List() => await mediator.Send(new List.Query());
+    public async Task<ActionResult<List<Activity>>> List() => await Mediator.Send(new List.Query());
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<Activity>> Details(Guid id) => await mediator.Send(new Details.Query{ID = id});
+    public async Task<ActionResult<Activity>> Details(Guid id) => await Mediator.Send(new Details.Query{ID = id});
 
     [HttpPost]
-    public async Task<ActionResult<Unit>> Create(Create.Command command) => await mediator.Send(command);
+    public async Task<ActionResult<Unit>> Create(Create.Command command) => await Mediator.Send(command);
 
     [HttpPut("{id}")]
-    public async Task<ActionResult<Unit>> Edit(Guid id, Edit.Command command) { command.ID = id; return await mediator.Send(command); } 
+    public async Task<ActionResult<Unit>> Edit(Guid id, Edit.Command command) { command.ID = id; return await Mediator.Send(command); } 
 
     [HttpDelete("{id}")]
-    public async Task<ActionResult<Unit>> Delete(Guid id) => await mediator.Send(new Delete.Command{ID = id});
+    public async Task<ActionResult<Unit>> Delete(Guid id) => await Mediator.Send(new Delete.Command{ID = id});
   }
 }
