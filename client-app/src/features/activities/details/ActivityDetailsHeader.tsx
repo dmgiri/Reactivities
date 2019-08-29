@@ -1,8 +1,9 @@
 import React from "react"
 import { Segment, Image, Item, Button, Header } from 'semantic-ui-react'
 import { IActivity } from '../../../app/models/activity'
-import { observer } from 'mobx-react-lite';
-import { Link } from 'react-router-dom';
+import { observer } from 'mobx-react-lite'
+import { Link } from 'react-router-dom'
+import { format } from 'date-fns'
 
 const activityImageStyle = { filter: 'brightness(70%)' }
 const activityImageTextStyle = { position: 'absolute', bottom: '5%', left: '5%', width: '100%', height: 'auto', color: 'white' }
@@ -19,7 +20,7 @@ const ActivityDetailsHeader: React.FC<IProps> = ({ activity }) => {
             <Item>
               <Item.Content>
                 <Header size="huge" content={activity.title} style={{ color: "white" }} />
-                <p>{activity.date}</p>
+                <p>{format(activity.date, 'eeee do MMMM')}</p>
                 <p>Hosted by <strong>Bob</strong></p>
               </Item.Content>
             </Item>
