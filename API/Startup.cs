@@ -11,6 +11,11 @@ using FluentValidation.AspNetCore;
 using API.Middleware;
 using Domain;
 using Microsoft.AspNetCore.Identity;
+using Application.Interfaces;
+using Infrastructure.Security;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 namespace API
 {
@@ -32,11 +37,20 @@ namespace API
       var identityBuilder = new IdentityBuilder(builder.UserType, builder.Services);
       identityBuilder.AddEntityFrameworkStores<DataContext>();
       identityBuilder.AddSignInManager<SignInManager<AppUser>>();
+
+      var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["TokenKey"]));
+      services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(opt => {
+        opt.TokenValidationParameters = new TokenValidationParameters
+        { ValidateIssuerSigningKey = true, IssuerSigningKey = key, ValidateAudience = false, ValidateIssuer = false };
+      });
+
+      services.AddScoped<IJwtGenerator, JwtGenerator>();
     }
 
     public void Configure(IApplicationBuilder app, IHostingEnvironment env)
     {
       app.UseMiddleware<ErrorHandlingMiddleware>();
+      app.UseAuthentication();
       app.UseCors("CorsPolicy");
       app.UseMvc();
     }

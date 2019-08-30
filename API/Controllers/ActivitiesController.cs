@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using Domain;
 using Application.Activities;
-
+using Microsoft.AspNetCore.Authorization;
 
 namespace API.Controllers
 {
@@ -15,6 +15,7 @@ namespace API.Controllers
     public async Task<ActionResult<List<Activity>>> List() => await Mediator.Send(new List.Query());
 
     [HttpGet("{id}")]
+    [Authorize]
     public async Task<ActionResult<Activity>> Details(Guid id) => await Mediator.Send(new Details.Query{ID = id});
 
     [HttpPost]

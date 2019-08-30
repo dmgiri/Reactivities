@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Identity;
 using Domain;
 using Application.Errors;
 using System.Net;
+using Application.Interfaces;
 
 namespace Application.User
 {
@@ -30,18 +31,25 @@ namespace Application.User
     {
       private readonly UserManager<AppUser> userManager;
       private readonly SignInManager<AppUser> signInManager;
-      public Handler(UserManager<AppUser> UserManager, SignInManager<AppUser> SignInManager)
-      {
-        this.signInManager = SignInManager; this.userManager = UserManager;
-      }
+      private readonly IJwtGenerator jwtGenerator;
+      public Handler(UserManager<AppUser> UserManager, SignInManager<AppUser> SignInManager, IJwtGenerator JwtGenerator)
+      { this.signInManager = SignInManager; this.jwtGenerator = JwtGenerator; this.userManager = UserManager; }
+
 
       public async Task<User> Handle(Query request, CancellationToken cancellationToken)
       {
         var user = await userManager.FindByEmailAsync(request.Email);
         if (user == null) throw new RestException(HttpStatusCode.Unauthorized);
+
         var result = await signInManager.CheckPasswordSignInAsync(user, request.Password, false);
         if (!result.Succeeded) throw new RestException(HttpStatusCode.Unauthorized);
-        else return new User { DisplayName = user.DisplayName, Token = "this will be a token", Username = user.UserName, Image = null };
+        else return new User 
+        { 
+          DisplayName = user.DisplayName, 
+          Token = jwtGenerator.CreateToken(user), 
+          Username = user.UserName, 
+          Image = null 
+        };
       }
     }
   }
