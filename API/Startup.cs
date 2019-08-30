@@ -16,6 +16,8 @@ using Infrastructure.Security;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc.Authorization;
 
 namespace API
 {
@@ -29,7 +31,8 @@ namespace API
       services.AddDbContext<DataContext>(opt => { opt.UseSqlite(Configuration.GetConnectionString("DefaultConnection")); });
       services.AddCors(opt => opt.AddPolicy("CorsPolicy", policy => { policy.AllowAnyHeader().AllowAnyMethod().WithOrigins("http://localhost:3000"); }));
       services.AddMediatR(typeof(List.Handler).Assembly);
-      services.AddMvc()
+      services.AddMvc(opt => { 
+        var policy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build(); opt.Filters.Add(new AuthorizeFilter(policy)); })
         .AddFluentValidation(cfg => cfg.RegisterValidatorsFromAssemblyContaining<Create>())
         .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
       
@@ -41,10 +44,9 @@ namespace API
       var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["TokenKey"]));
       services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(opt => {
         opt.TokenValidationParameters = new TokenValidationParameters
-        { ValidateIssuerSigningKey = true, IssuerSigningKey = key, ValidateAudience = false, ValidateIssuer = false };
-      });
-
+        { ValidateIssuerSigningKey = true, IssuerSigningKey = key, ValidateAudience = false, ValidateIssuer = false }; });
       services.AddScoped<IJwtGenerator, JwtGenerator>();
+      services.AddScoped<IUserAccessor, UserAccessor>();
     }
 
     public void Configure(IApplicationBuilder app, IHostingEnvironment env)

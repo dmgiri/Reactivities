@@ -1,4 +1,4 @@
-// post a new activity
+// login user
 POST http://localhost:5000/api/user/login HTTP/1.1
 Content-Type: application/json
 
@@ -6,4 +6,33 @@ Content-Type: application/json
   "email": "bob@test.com",
   "password": "Pa$$w0rd"
 }
+###
+
+// register a new user: success!
+POST http://localhost:5000/api/user/register HTTP/1.1
+Content-Type: application/json
+
+{
+  "displayName": "John",
+  "username": "john",
+  "email": "john@test.com",
+  "password": "Pa$$w0rd"
+}
+###
+
+// register a new user: error!
+POST http://localhost:5000/api/user/register HTTP/1.1
+Content-Type: application/json
+
+{
+  "displayName": "Bertrand",
+  "username": "b",
+  "email": "b@b.com",
+  "password": "Bb$0"
+}
+###
+
+// get current user
+GET http://localhost:5000/api/user HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiJib2IiLCJuYmYiOjE1NjcxNjc5OTksImV4cCI6MTU2Nzc3Mjc5OSwiaWF0IjoxNTY3MTY3OTk5fQ.nzbni5RlDQcGsSxBgfK6vJ7JxypS2zIQvatn7vIDhN0-saVFHUxHlbfbGjjQbn0hzV8C4JTgsCKCp75KXS_tqg
 ###

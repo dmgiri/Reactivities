@@ -1,5 +1,6 @@
 // get all activities
 GET http://localhost:5000/api/activities HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiJib2IiLCJuYmYiOjE1NjcxNTA1NzgsImV4cCI6MTU2Nzc1NTM3OCwiaWF0IjoxNTY3MTUwNTc4fQ.N9FYKf42mCZNFLpt-o3LVpa8guH5S88NPO-DKlkCayoo-AKAZlTzuxKl7wD1JY8NvXUdRCXCzYUB6anL-2YOLw
 ###
 
 // get one activity

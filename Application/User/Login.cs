@@ -23,7 +23,7 @@ namespace Application.User
       public QueryValidator()
       {
         RuleFor(x => x.Email).NotEmpty();
-        RuleFor(x => x.Password).NotEmpty();
+        RuleFor(x => x.Password).NotEmpty().MinimumLength(8);
       }
     }
 
@@ -43,13 +43,7 @@ namespace Application.User
 
         var result = await signInManager.CheckPasswordSignInAsync(user, request.Password, false);
         if (!result.Succeeded) throw new RestException(HttpStatusCode.Unauthorized);
-        else return new User 
-        { 
-          DisplayName = user.DisplayName, 
-          Token = jwtGenerator.CreateToken(user), 
-          Username = user.UserName, 
-          Image = null 
-        };
+        return new User { DisplayName = user.DisplayName, Token = jwtGenerator.CreateToken(user), Username = user.UserName, Image = null };
       }
     }
   }
