@@ -4,7 +4,6 @@ import { Segment, Form, Button, Grid } from 'semantic-ui-react'
 import { v4 as uuid} from 'uuid'
 import { observer } from 'mobx-react-lite'
 import { Form as FinalForm, Field } from 'react-final-form'
-import ActivityStore from '../../../app/stores/activityStore'
 import TextInput from '../../../app/common/form/TextInput'
 import TextAreaInput from '../../../app/common/form/TextAreaInput'
 import SelectInput from '../../../app/common/form/SelectInput'
@@ -13,6 +12,7 @@ import DateInput from '../../../app/common/form/DateInput'
 import { ActivityFormValues } from '../../../app/models/activity'
 import { combineDateAndTime } from '../../../app/common/util/util'
 import { combineValidators, isRequired, composeValidators, hasLengthGreaterThan } from 'revalidate'
+import { RootStoreContext } from '../../../app/stores/rootStore';
 
 const validate = combineValidators({
   title: isRequired('Title'), category: isRequired('Category'),
@@ -23,9 +23,10 @@ const validate = combineValidators({
 interface DetailParams { id: string }
 
 const ActivityForm: React.FC<RouteComponentProps<DetailParams>> = ({ match, history }) => {
-  
-  const activityStore = useContext(ActivityStore)
-  const { createActivity, editActivity, submitting, loadActivity } = activityStore
+
+  const rootStore = useContext(RootStoreContext)
+  const { createActivity, editActivity, submitting, loadActivity } = rootStore.activityStore
+
   const [activity, setActivity] = useState(new ActivityFormValues())
   const [loading, setLoading] = useState(false)
   
