@@ -4,12 +4,13 @@ Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiJib2IiL
 ###
 
 // get one activity
-GET http://localhost:5000/api/activities/05509eb9-66a0-4def-a05a-95656fad3167 HTTP/1.1
+GET http://localhost:5000/api/activities/1cb391c2-aab0-427e-8b88-8fcbd855496c HTTP/1.1
 Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiJib2IiLCJuYmYiOjE1NjcxNTA1NzgsImV4cCI6MTU2Nzc1NTM3OCwiaWF0IjoxNTY3MTUwNTc4fQ.N9FYKf42mCZNFLpt-o3LVpa8guH5S88NPO-DKlkCayoo-AKAZlTzuxKl7wD1JY8NvXUdRCXCzYUB6anL-2YOLw
 ###
 
 // post a new activity
 POST http://localhost:5000/api/activities HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiJib2IiLCJuYmYiOjE1NjcxNjc5OTksImV4cCI6MTU2Nzc3Mjc5OSwiaWF0IjoxNTY3MTY3OTk5fQ.nzbni5RlDQcGsSxBgfK6vJ7JxypS2zIQvatn7vIDhN0-saVFHUxHlbfbGjjQbn0hzV8C4JTgsCKCp75KXS_tqg
 Content-Type: application/json
 
 {
@@ -40,4 +41,14 @@ Content-Type: application/json
 
 // delete an activity
 DELETE http://localhost:5000/api/activities/921ed03c-eeda-4cf4-bd1e-842f60db933d HTTP/1.1
+###
+
+// attend an activity
+POST http://localhost:5000/api/activities/05509eb9-66a0-4def-a05a-95656fad3167/attend HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiJib2IiLCJuYmYiOjE1NjcxNTA1NzgsImV4cCI6MTU2Nzc1NTM3OCwiaWF0IjoxNTY3MTUwNTc4fQ.N9FYKf42mCZNFLpt-o3LVpa8guH5S88NPO-DKlkCayoo-AKAZlTzuxKl7wD1JY8NvXUdRCXCzYUB6anL-2YOLw
+###
+
+// unattend an activity
+DELETE http://localhost:5000/api/activities/05509eb9-66a0-4def-a05a-95656fad3167/attend HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiJib2IiLCJuYmYiOjE1NjcxNTA1NzgsImV4cCI6MTU2Nzc1NTM3OCwiaWF0IjoxNTY3MTUwNTc4fQ.N9FYKf42mCZNFLpt-o3LVpa8guH5S88NPO-DKlkCayoo-AKAZlTzuxKl7wD1JY8NvXUdRCXCzYUB6anL-2YOLw
 ###
