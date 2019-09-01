@@ -3,8 +3,8 @@ using MediatR;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
-using Application.Activities;
 using Microsoft.AspNetCore.Authorization;
+using Application.Activities;
 
 namespace API.Controllers
 {

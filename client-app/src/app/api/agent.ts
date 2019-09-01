@@ -7,9 +7,7 @@ import { IUser, IUserFormValues } from '../models/user'
 axios.defaults.baseURL = 'http://localhost:5000/api'
 
 axios.interceptors.request.use((config) => {
-  const token = window.localStorage.getItem('jwt')
-  if (token) config.headers.Authorization = `Bearer ${token}`
-  return config
+  const token = window.localStorage.getItem('jwt'); if (token) config.headers.Authorization = `Bearer ${token}`; return config
 }, error => { return Promise.reject(error)})
 
 axios.interceptors.response.use(undefined, error => {
@@ -22,7 +20,6 @@ axios.interceptors.response.use(undefined, error => {
 })
 
 const responseBody = (response: AxiosResponse) => response.data
-
 const sleep = (ms: number) => (response: AxiosResponse) => new Promise<AxiosResponse>(resolve => setTimeout(() => resolve(response), ms))
 
 const requests = {
@@ -37,7 +34,9 @@ const Activities = {
   details: (id: string): Promise<IActivity> => requests.get(`/activities/${id}`),
   create: (activity: IActivity): Promise<IActivity> => requests.post('/activities', activity),
   update: (activity: IActivity): Promise<IActivity> => requests.put(`/activities/${activity.id}`, activity),
-  delete: (id: string): Promise<void> => requests.del(`/activities/${id}`)
+  delete: (id: string): Promise<void> => requests.del(`/activities/${id}`),
+  attend: (id: string): Promise<void> => requests.post(`/activities/${id}/attend`, {}),
+  unattend: (id: string): Promise<void> => requests.del(`/activities/${id}/attend`)
 }
 
 const User = {

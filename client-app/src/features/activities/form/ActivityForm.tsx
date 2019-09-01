@@ -42,7 +42,7 @@ const ActivityForm: React.FC<RouteComponentProps<DetailParams>> = ({ match, hist
   const handleFinalFormSubmit = (values: any) => {
     const dateAndTime = combineDateAndTime(values.date, values.time)
     const { date, time, ...activity } = values; activity.date = dateAndTime
-    if (activity.id) { let newActivity = { ...activity, id: uuid() }; createActivity(newActivity) }
+    if (!activity.id) { let newActivity = { ...activity, id: uuid() }; createActivity(newActivity) }
     else { editActivity(activity) }
   }
 

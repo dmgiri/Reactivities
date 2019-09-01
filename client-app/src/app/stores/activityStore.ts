@@ -5,6 +5,7 @@ import agent from '../api/agent'
 import { history } from '../../index'
 import { toast } from 'react-toastify'
 import { RootStore } from './rootStore'
+import { setActivityProps, createAttendee } from '../common/util/util';
 
 
 export default class ActivityStore {
@@ -16,6 +17,7 @@ export default class ActivityStore {
   @observable activity: IActivity | null = null
   @observable loadingInitial = false
   @observable submitting = false
+  @observable loading = false
   @observable target = ''
 
   @computed
@@ -32,11 +34,11 @@ export default class ActivityStore {
 
   @action
   loadActivities = async () => {
-    this.loadingInitial = true
+    this.loadingInitial = true; const user = this.rootStore.userStore.user!
     try {
       const activities = await agent.Activities.list()
       runInAction('loading activities', () => {
-        activities.forEach(activity => { activity.date = new Date(activity.date); this.activityRegistry.set(activity.id, activity) })
+        activities.forEach(activity => { setActivityProps(activity, user); this.activityRegistry.set(activity.id, activity) })
         this.loadingInitial = false
       })
     }
@@ -48,11 +50,11 @@ export default class ActivityStore {
     let activity = this.getActivity(id)
     if (activity) { this.activity = activity; return activity }
     else {
-      this.loadingInitial = true
+      this.loadingInitial = true; const user = this.rootStore.userStore.user!
       try {
         activity = await agent.Activities.details(id)
         runInAction('getting activity', () => {
-          activity.date = new Date(activity.date); this.activity = activity
+          setActivityProps(activity, user); this.activity = activity
           this.activityRegistry.set(activity.id, activity); this.loadingInitial = false
         })
         return activity
@@ -66,8 +68,11 @@ export default class ActivityStore {
   @action
   createActivity = async (activity: IActivity) => {
     this.submitting = true
+    const user = this.rootStore.userStore.user!
     try {
       await agent.Activities.create(activity)
+      const attendee = createAttendee(user); attendee.isHost = true; activity.isHost = true
+      let attendees = []; attendees.push(attendee); activity.attendees = attendees
       runInAction('creating activity', () => { this.activityRegistry.set(activity.id, activity); this.activity = activity; this.submitting = false })
       history.push(`/activities/${activity.id}`)
     }
@@ -96,10 +101,36 @@ export default class ActivityStore {
     this.submitting = true; this.target = event.currentTarget.name
     try {
       await agent.Activities.delete(id)
-      runInAction('deleting activity', () => {
-        this.activityRegistry.delete(id)
-        this.submitting = false; this.target = ''
-    })}
+      runInAction('deleting activity', () => { this.activityRegistry.delete(id); this.submitting = false; this.target = '' })}
     catch (error) { console.log(error); runInAction('delete activity error', () => this.submitting = false )}
+  }
+
+  @action
+  attendActivity = async () => { 
+    this.loading = true
+    const user = this.rootStore.userStore.user!
+    const attendee = createAttendee(user)
+    try {
+      await agent.Activities.attend(this.activity!.id)
+      runInAction(() => {
+        if (this.activity) {
+          this.activity.attendees.push(attendee); this.activity.isGoing = true; this.loading = false
+          this.activityRegistry.set(this.activity.id, this.activity)
+    }})}
+    catch (error) { runInAction(() => this.loading = false); toast.error('Problem signing up to this event'); console.log(error) }
+  }
+
+  @action
+  cancelAttendance = async () => {
+    this.loading = true
+    const user = this.rootStore.userStore.user!
+    try {
+      await agent.Activities.unattend(this.activity!.id)
+      runInAction(() => {
+        if (this.activity) {
+          this.activity.attendees = this.activity.attendees.filter(a => a.username !== user.username); this.activity.isGoing = false
+          this.activityRegistry.set(this.activity.id, this.activity); this.loading = false
+    }})}
+    catch (error) { this.loading = false; toast.error('Problem canceling from this event'); console.log (error) }
   }
 }

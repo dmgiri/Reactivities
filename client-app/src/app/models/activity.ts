@@ -7,7 +7,10 @@ export interface IActivity {
   category: string,
   date: Date,
   city: string,
-  venue: string
+  venue: string,
+  isGoing: boolean,
+  isHost: boolean,
+  attendees: IAttendee[]
 }
 
 export interface IActivityFormValues extends Partial<IActivity> { time?: Date }
@@ -30,5 +33,15 @@ export class ActivityFormValues implements IActivityFormValues {
   }
 }
 
+export interface IAttendee {
+  username: string, 
+  displayName: string;
+  image: string;
+  isHost: boolean
+}
+
 // notes:
 // Object.assign(this, init) means that all the properties of init are assigned to the corresponding properties of a new instance of the class (this).
+
+// isGoing: is the currently logged in user going to this activity?
+// isHost:  is the currently logged in user hosting this event?
