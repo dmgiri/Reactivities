@@ -29,7 +29,7 @@ const ActivityDetailsHeader: React.FC<IProps> = ({ activity }) => {
               <Item.Content>
                 <Header size="huge" content={activity.title} style={{ color: "white" }} />
                 <p>{format(activity.date, 'eeee do MMMM')}</p>
-                <p>Hosted by <strong>{host.displayName}</strong></p>
+                <p>Hosted by <strong><Link to={`/profile/${host.username}`}>{host.displayName}</Link></strong></p>
               </Item.Content>
             </Item>
           </Item.Group>

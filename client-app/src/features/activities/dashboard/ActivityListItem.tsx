@@ -17,10 +17,10 @@ const ActivityListItem: React.FC<IProps> = ({ activity }) => {
       <Segment>     
         <Item.Group>
           <Item>
-            <Item.Image size='tiny' circular src={host.image || '/assets/user.png'} />
+            <Item.Image size='tiny' circular src={host.image || '/assets/user.png'} style={{margin: '3px'}} />
             <Item.Content>
               <Item.Header as={Link} to={`/activities/${activity.id}`}>{activity.title}</Item.Header>
-              <Item.Description>Hosted by {host.displayName}</Item.Description>
+              <Item.Description>Hosted by <Link to={`/profile/${host.username}`}>{host.displayName}</Link></Item.Description>
               {activity.isHost && <Item.Description><Label basic color='orange' content='You are hosting this event' /></Item.Description>}
               {activity.isGoing && !activity.isHost &&
                 <Item.Description><Label basic color='green' content='You are attending this event' /></Item.Description>}
