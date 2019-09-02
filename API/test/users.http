@@ -34,5 +34,7 @@ Content-Type: application/json
 
 // get current user
 GET http://localhost:5000/api/user HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiJib2IiLCJuYmYiOjE1NjcxNjc5OTksImV4cCI6MTU2Nzc3Mjc5OSwiaWF0IjoxNTY3MTY3OTk5fQ.nzbni5RlDQcGsSxBgfK6vJ7JxypS2zIQvatn7vIDhN0-saVFHUxHlbfbGjjQbn0hzV8C4JTgsCKCp75KXS_tqg
-###
+Authorization: {{token}}
+
+// Bob, 01-09-2019
+@token = Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiJib2IiLCJuYmYiOjE1NjczNzM5MjQsImV4cCI6MTU2Nzk3ODcyNCwiaWF0IjoxNTY3MzczOTI0fQ.t5NcUEEgtJn4uGTLXKN3uvYP2rW2NVpgxlWa7rtV349Q6PBBSR84LyByGnwpXFczeOp298F3ZoAByaFOG7Nj7Q

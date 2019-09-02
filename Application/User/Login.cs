@@ -7,6 +7,7 @@ using Domain;
 using Application.Errors;
 using System.Net;
 using Application.Interfaces;
+using System.Linq;
 
 namespace Application.User
 {
@@ -43,7 +44,14 @@ namespace Application.User
 
         var result = await signInManager.CheckPasswordSignInAsync(user, request.Password, false);
         if (!result.Succeeded) throw new RestException(HttpStatusCode.Unauthorized);
-        return new User { DisplayName = user.DisplayName, Token = jwtGenerator.CreateToken(user), Username = user.UserName, Image = null };
+        
+        return new User 
+        { 
+          DisplayName = user.DisplayName, 
+          Username = user.UserName, 
+          Token = jwtGenerator.CreateToken(user), 
+          Image = user.Photos.FirstOrDefault(x => x.IsMain)?.Url
+        };
       }
     }
   }

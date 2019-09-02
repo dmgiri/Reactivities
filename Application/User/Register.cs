@@ -55,9 +55,15 @@ namespace Application.User
 
         var user = new AppUser { DisplayName = request.DisplayName, Email = request.Email, UserName = request.Username };
         var result = await userManager.CreateAsync(user, request.Password);
-
         if (!result.Succeeded) throw new Exception("Problem creating user");
-        return new User { DisplayName = user.DisplayName, Username = user.UserName, Token = jwtGenerator.CreateToken(user), Image = null };
+
+        return new User 
+        { 
+          DisplayName = user.DisplayName, 
+          Username = user.UserName, 
+          Token = jwtGenerator.CreateToken(user), 
+          Image = user.Photos.FirstOrDefault(x => x.IsMain)?.Url
+        };
       }
     }
   }

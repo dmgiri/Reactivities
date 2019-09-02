@@ -19,6 +19,9 @@ using System.Text;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using AutoMapper;
+using Infrastructure.Photos;
+using Microsoft.AspNetCore.Http.Features;
+using System;
 
 namespace API
 {
@@ -26,18 +29,20 @@ namespace API
   {
     public Startup(IConfiguration configuration) => Configuration = configuration;
     public IConfiguration Configuration { get; }
-        
+
     public void ConfigureServices(IServiceCollection services)
     {
       services.AddDbContext<DataContext>(opt => { opt.UseLazyLoadingProxies(); opt.UseSqlite(Configuration.GetConnectionString("DefaultConnection")); });
       services.AddCors(opt => opt.AddPolicy("CorsPolicy", policy => { policy.AllowAnyHeader().AllowAnyMethod().WithOrigins("http://localhost:3000"); }));
       services.AddMediatR(typeof(List.Handler).Assembly);
       services.AddAutoMapper(typeof(List.Handler));
-      services.AddMvc(opt => { 
-        var policy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build(); opt.Filters.Add(new AuthorizeFilter(policy)); })
+      services.AddMvc(opt =>
+      {
+        var policy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build(); opt.Filters.Add(new AuthorizeFilter(policy));
+      })
         .AddFluentValidation(cfg => cfg.RegisterValidatorsFromAssemblyContaining<Create>())
         .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
-      
+
       var builder = services.AddIdentityCore<AppUser>();
       var identityBuilder = new IdentityBuilder(builder.UserType, builder.Services);
       identityBuilder.AddEntityFrameworkStores<DataContext>();
@@ -47,11 +52,17 @@ namespace API
       services.AddTransient<IAuthorizationHandler, IsHostRequirementHandler>();
 
       var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["TokenKey"]));
-      services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(opt => {
+      services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(opt =>
+      {
         opt.TokenValidationParameters = new TokenValidationParameters
-        { ValidateIssuerSigningKey = true, IssuerSigningKey = key, ValidateAudience = false, ValidateIssuer = false }; });
+        { ValidateIssuerSigningKey = true, IssuerSigningKey = key, ValidateAudience = false, ValidateIssuer = false };
+      });
       services.AddScoped<IJwtGenerator, JwtGenerator>();
       services.AddScoped<IUserAccessor, UserAccessor>();
+      services.AddScoped<IPhotoAccessor, PhotoAccessor>();
+      services.Configure<CloudinarySettings>(Configuration.GetSection("Cloudinary"));
+      services.Configure<FormOptions>(options => { options.BufferBody = true; options.ValueLengthLimit = Int32.MaxValue; 
+        options.MultipartBodyLengthLimit = Int32.MaxValue; options.MemoryBufferThreshold = Int32.MaxValue; });
     }
 
     public void Configure(IApplicationBuilder app, IHostingEnvironment env)
