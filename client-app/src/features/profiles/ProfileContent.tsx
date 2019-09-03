@@ -15,7 +15,7 @@ interface IProps { profile: IProfile }
 
 const ProfileContent: React.FC<IProps> = ({ profile }) => {
   return (
-   <Tab menu={{fluid: true, vertical: true}} menuPosition='right' panes={panes} />
+   <Tab menu={{fluid: true, vertical: true}} menuPosition='right' panes={panes} activeIndex={1} />
   )
 }
 
