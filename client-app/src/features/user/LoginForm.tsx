@@ -16,7 +16,8 @@ const LoginForm: React.FC = () => {
   const { login } = rootStore.userStore
 
   return (
-    <FinalForm onSubmit={(values: IUserFormValues) => login(values).catch(error => ({ [FORM_ERROR]: error }))} validate={validate}
+    <FinalForm
+      onSubmit={(values: IUserFormValues) => login(values).catch(error => ({ [FORM_ERROR]: error }))} validate={validate}
       render={({ handleSubmit, submitting, submitError, invalid, pristine, dirtySinceLastSubmit }) => (
         <Form onSubmit={handleSubmit} error>
           <Header as='h2' content='Login to Reactivities' color='teal' textAlign='center' />

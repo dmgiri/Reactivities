@@ -12,7 +12,7 @@ import DateInput from '../../../app/common/form/DateInput'
 import { ActivityFormValues } from '../../../app/models/activity'
 import { combineDateAndTime } from '../../../app/common/util/util'
 import { combineValidators, isRequired, composeValidators, hasLengthGreaterThan } from 'revalidate'
-import { RootStoreContext } from '../../../app/stores/rootStore';
+import { RootStoreContext } from '../../../app/stores/rootStore'
 
 const validate = combineValidators({
   title: isRequired('Title'), category: isRequired('Category'),

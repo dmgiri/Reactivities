@@ -46,6 +46,19 @@ export default class ProfileStore
   }
 
   @action
+  updateProfile = async (profile: Partial<IProfile>) => {
+    const user = this.rootStore.userStore.user
+    try {
+      await agent.Profiles.updateProfile(profile)
+      runInAction(() => {
+        if (this.profile && user) {
+          if (user.displayName !== profile.displayName) user.displayName = profile.displayName!
+          this.profile = { ...this.profile, ...profile}
+    }})}
+    catch (error) { console.log(error); toast.error('Problem updating profile') }
+  }
+
+  @action
   setMainPhoto = async (photo: IPhoto) => {
     const user = this.rootStore.userStore.user; this.loading = true
     try {

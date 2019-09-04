@@ -6,6 +6,11 @@ export interface IProfile {
   photos: IPhoto[]
 }
 
+export interface IProfileFormValues {
+  displayName: string,
+  bio?: string
+}
+
 export interface IPhoto {
   id: string,
   url: string, 

@@ -1,7 +1,7 @@
 import React, { useContext, useState } from 'react'
 import { Tab, Header, Card, Image, Button, Grid } from 'semantic-ui-react'
-import { RootStoreContext } from '../../app/stores/rootStore'
 import { observer } from 'mobx-react-lite'
+import { RootStoreContext } from '../../app/stores/rootStore'
 import PhotoUploadWidget from '../../app/common/photoUpload/PhotoUploadWidget'
 
 
@@ -9,6 +9,7 @@ const ProfilePhotos: React.FC = () => {
 
   const rootStore = useContext(RootStoreContext)
   const { profile, isCurrentUser, uploadPhoto, uploadingPhoto, setMainPhoto, loading, deletePhoto } = rootStore.profileStore
+  
   const [addPhotoMode, setAddPhotoMode] = useState(false)
   const [target, setTarget] = useState<string | undefined>(undefined)
   const [deleteTarget, setDeleteTarget] = useState<string | undefined>(undefined)
