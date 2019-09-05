@@ -5,7 +5,8 @@ import agent from '../api/agent'
 import { history } from '../../index'
 import { toast } from 'react-toastify'
 import { RootStore } from './rootStore'
-import { setActivityProps, createAttendee } from '../common/util/util';
+import { setActivityProps, createAttendee } from '../common/util/util'
+import { HubConnection, HubConnectionBuilder, LogLevel } from '@aspnet/signalr'
 
 
 export default class ActivityStore {
@@ -19,6 +20,29 @@ export default class ActivityStore {
   @observable submitting = false
   @observable loading = false
   @observable target = ''
+  @observable.ref hubConnection: HubConnection | null = null
+
+  @action
+  createHubConnection = () => {
+    const token = this.rootStore.commonStore.token!
+    this.hubConnection = new HubConnectionBuilder().withUrl('http://localhost:5000/chat',{ accessTokenFactory: () => token })
+      .configureLogging(LogLevel.Information).build();
+    this.hubConnection.start()
+      .then(() => console.log(this.hubConnection!.state))
+      .catch((error) => console.log('Error establishing connection: ', error));
+    this.hubConnection.on('ReceiveComment', comment => { runInAction(() => this.activity!.comments.push(comment)) });
+  }
+
+  @action stopHubConnection = () => this.hubConnection!.stop()
+
+  @action
+  addComment = async (values: any) => {
+    values.activityID = this.activity!.id
+    try {
+      await this.hubConnection!.invoke('SendComment', values)
+    }
+    catch (error) { console.log(error) }
+  }
 
   @computed
   get activitiesByDate() { return this.groupActivitiesByDate(Array.from(this.activityRegistry.values())) }
@@ -72,7 +96,7 @@ export default class ActivityStore {
     try {
       await agent.Activities.create(activity)
       const attendee = createAttendee(user); attendee.isHost = true; activity.isHost = true
-      let attendees = []; attendees.push(attendee); activity.attendees = attendees
+      let attendees = []; attendees.push(attendee); activity.attendees = attendees; activity.comments = []
       runInAction('creating activity', () => { this.activityRegistry.set(activity.id, activity); this.activity = activity; this.submitting = false })
       history.push(`/activities/${activity.id}`)
     }

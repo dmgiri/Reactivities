@@ -35,7 +35,8 @@ namespace API
     public void ConfigureServices(IServiceCollection services)
     {
       services.AddDbContext<DataContext>(opt => { opt.UseLazyLoadingProxies(); opt.UseSqlite(Configuration.GetConnectionString("DefaultConnection")); });
-      services.AddCors(opt => opt.AddPolicy("CorsPolicy", policy => { policy.AllowAnyHeader().AllowAnyMethod().WithOrigins("http://localhost:3000"); }));
+      services.AddCors(opt => opt.AddPolicy("CorsPolicy", policy => { 
+        policy.AllowAnyHeader().AllowAnyMethod().WithOrigins("http://localhost:3000").AllowCredentials(); }));
       services.AddMediatR(typeof(List.Handler).Assembly);
       services.AddAutoMapper(typeof(List.Handler));
       services.AddSignalR();
