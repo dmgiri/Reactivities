@@ -5,7 +5,6 @@ import { combineValidators, isRequired } from 'revalidate'
 import { Form, Button } from 'semantic-ui-react'
 import TextInput from '../../app/common/form/TextInput'
 import TextAreaInput from '../../app/common/form/TextAreaInput'
-import { observer } from 'mobx-react-lite'
 
 const validate = combineValidators({ displayName: isRequired('displayName') })
 
@@ -26,4 +25,4 @@ const ProfileEditForm: React.FC<IProps> = ({ profile, updateProfile }) => {
   )
 }
 
-export default observer(ProfileEditForm)
+export default ProfileEditForm
