@@ -24,6 +24,7 @@ using Microsoft.AspNetCore.Http.Features;
 using System;
 using System.Threading.Tasks;
 using API.SignalR;
+using Application.Profiles;
 
 namespace API
 {
@@ -70,7 +71,9 @@ namespace API
       services.AddScoped<IJwtGenerator, JwtGenerator>();
       services.AddScoped<IUserAccessor, UserAccessor>();
       services.AddScoped<IPhotoAccessor, PhotoAccessor>();
+      services.AddScoped<IProfileReader, ProfileReader>();
       services.Configure<CloudinarySettings>(Configuration.GetSection("Cloudinary"));
+
       services.Configure<FormOptions>(options => { options.BufferBody = true; options.ValueLengthLimit = Int32.MaxValue; 
         options.MultipartBodyLengthLimit = Int32.MaxValue; options.MemoryBufferThreshold = Int32.MaxValue; });
     }

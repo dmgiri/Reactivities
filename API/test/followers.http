@@ -1,0 +1,45 @@
+// follow another user
+POST http://localhost:5000/api/profiles/tom/follow HTTP/1.1
+Authorization: {{bob_token}}
+###
+
+// unfollow another user
+DELETE http://localhost:5000/api/profiles/tom/follow HTTP/1.1
+Authorization: {{bob_token}}
+###
+
+// get the followings => Tom's profile
+GET http://localhost:5000/api/profiles/bob/follow?predicate=followings HTTP/1.1
+Authorization: {{bob_token}}
+###
+
+// get the followers => zip
+GET http://localhost:5000/api/profiles/bob/follow?predicate=followers HTTP/1.1
+Authorization: {{bob_token}}
+###
+
+// get someone else's followings => zip
+GET http://localhost:5000/api/profiles/tom/follow?predicate=followings HTTP/1.1
+Authorization: {{bob_token}}
+###
+
+// get the followings => zip
+GET http://localhost:5000/api/profiles/tom/follow?predicate=followings HTTP/1.1
+Authorization: {{tom_token}}
+###
+
+// get the followers => Bob's profile
+GET http://localhost:5000/api/profiles/tom/follow?predicate=followers HTTP/1.1
+Authorization: {{tom_token}}
+###
+
+// get someone else's followers => zip
+GET http://localhost:5000/api/profiles/bob/follow?predicate=followers HTTP/1.1
+Authorization: {{tom_token}}
+###
+
+// Bob, 01-09-2019
+@bob_token = Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiJib2IiLCJuYmYiOjE1NjczNzM5MjQsImV4cCI6MTU2Nzk3ODcyNCwiaWF0IjoxNTY3MzczOTI0fQ.t5NcUEEgtJn4uGTLXKN3uvYP2rW2NVpgxlWa7rtV349Q6PBBSR84LyByGnwpXFczeOp298F3ZoAByaFOG7Nj7Q
+
+// Tom, 05-09-2019
+@tom_token = Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiJ0b20iLCJuYmYiOjE1Njc3NzE3MDYsImV4cCI6MTU2ODM3NjUwNiwiaWF0IjoxNTY3NzcxNzA2fQ.1vwMy-S6VVRzO9Jt021zTYGPo-afbN0Qg0QnbWF_ryz3l6OkQ3JsM70J0ZvlXbag1-0APxqtvkomLInvuDd_YA
