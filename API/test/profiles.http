@@ -1,17 +1,23 @@
 // get a profile
 GET http://localhost:5000/api/profiles/bob HTTP/1.1
-Authorization: {{token}}
+Authorization: {{bob_token}}
 ###
 
 // update your profile
 PUT http://localhost:5000/api/profiles
 Content-Type: application/json
-Authorization: {{token}}
+Authorization: {{bob_token}}
 
 {
   "displayName": "Robert H. III",
   "bio": "Third generation VanderBilt and proud owner of the test.com domain"
 }
+###
+
+// get Bob's activities
+GET http://localhost:5000/api/profiles/bob/activities HTTP/1.1
+Authorization: {{bob_token}}
+###
 
 // Bob, 01-09-2019
-@token = Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiJib2IiLCJuYmYiOjE1NjczNzM5MjQsImV4cCI6MTU2Nzk3ODcyNCwiaWF0IjoxNTY3MzczOTI0fQ.t5NcUEEgtJn4uGTLXKN3uvYP2rW2NVpgxlWa7rtV349Q6PBBSR84LyByGnwpXFczeOp298F3ZoAByaFOG7Nj7Q
+@bob_token = Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiJib2IiLCJuYmYiOjE1NjczNzM5MjQsImV4cCI6MTU2Nzk3ODcyNCwiaWF0IjoxNTY3MzczOTI0fQ.t5NcUEEgtJn4uGTLXKN3uvYP2rW2NVpgxlWa7rtV349Q6PBBSR84LyByGnwpXFczeOp298F3ZoAByaFOG7Nj7Q

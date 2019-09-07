@@ -1,7 +1,8 @@
+using MediatR;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 using Application.Profiles;
-using MediatR;
 
 namespace API.Controllers
 {
@@ -12,5 +13,9 @@ namespace API.Controllers
 
     [HttpPut]
     public async Task<ActionResult<Unit>> Edit(Edit.Command command) => await Mediator.Send(command);
+
+    [HttpGet("{username}/activities")]
+    public async Task<ActionResult<List<UserActivityDto>>> ListActivities(string username, string predicate) =>
+      await Mediator.Send(new ListActivities.Query{Username = username, Predicate = predicate});
   }
 }

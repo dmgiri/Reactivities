@@ -1,16 +1,16 @@
 // get all activities
 GET http://localhost:5000/api/activities HTTP/1.1
-Authorization: {{token}}
+Authorization: {{bob_token}}
 ###
 
 // get one activity
 GET http://localhost:5000/api/activities/1cb391c2-aab0-427e-8b88-8fcbd855496c HTTP/1.1
-Authorization: {{token}}
+Authorization: {{bob_token}}
 ###
 
 // post a new activity
 POST http://localhost:5000/api/activities HTTP/1.1
-Authorization: {{token}}
+Authorization: {{bob_token}}
 Content-Type: application/json
 
 {
@@ -25,7 +25,7 @@ Content-Type: application/json
 
 // post a new activity
 POST http://localhost:5000/api/activities HTTP/1.1
-Authorization: {{token}}
+Authorization: {{bob_token}}
 Content-Type: application/json
 
 {}
@@ -33,7 +33,7 @@ Content-Type: application/json
 
 // edit an activity
 PUT http://localhost:5000/api/activities/3fd43847-6fc0-40e6-9413-8fa516f2102a HTTP/1.1
-Authorization: {{token}}
+Authorization: {{bob_token}}
 Content-Type: application/json
 
 {
@@ -43,18 +43,34 @@ Content-Type: application/json
 
 // delete an activity
 DELETE http://localhost:5000/api/activities/921ed03c-eeda-4cf4-bd1e-842f60db933d HTTP/1.1
-Authorization: {{token}}
+Authorization: {{bob_token}}
 ###
 
 // attend an activity
 POST http://localhost:5000/api/activities/05509eb9-66a0-4def-a05a-95656fad3167/attend HTTP/1.1
-Authorization: {{token}}
+Authorization: {{bob_token}}
 ###
 
 // unattend an activity
 DELETE http://localhost:5000/api/activities/05509eb9-66a0-4def-a05a-95656fad3167/attend HTTP/1.1
-Authorization: {{token}}
+Authorization: {{bob_token}}
 ###
 
+// get the activities Bob is attending => first 3 of 7
+GET http://localhost:5000/api/activities?isgoing=true HTTP/1.1
+Authorization: {{bob_token}}
+###
+
+// get the activities Bob is hosting => first 3 of 4
+GET http://localhost:5000/api/activities?ishost=true HTTP/1.1
+Authorization: {{bob_token}}
+###
+
+// get the activities from date 2017-01-01 => first 3 of 11
+GET http://localhost:5000/api/activities?startDate=2017-01-01 HTTP/1.1
+Authorization: {{bob_token}}
+###
+
+
 // Bob, 01-09-2019
-@token = Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiJib2IiLCJuYmYiOjE1NjczNzM5MjQsImV4cCI6MTU2Nzk3ODcyNCwiaWF0IjoxNTY3MzczOTI0fQ.t5NcUEEgtJn4uGTLXKN3uvYP2rW2NVpgxlWa7rtV349Q6PBBSR84LyByGnwpXFczeOp298F3ZoAByaFOG7Nj7Q
+@bob_token = Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiJib2IiLCJuYmYiOjE1NjczNzM5MjQsImV4cCI6MTU2Nzk3ODcyNCwiaWF0IjoxNTY3MzczOTI0fQ.t5NcUEEgtJn4uGTLXKN3uvYP2rW2NVpgxlWa7rtV349Q6PBBSR84LyByGnwpXFczeOp298F3ZoAByaFOG7Nj7Q

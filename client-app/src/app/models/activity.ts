@@ -1,4 +1,7 @@
-import { IActivityFormValues } from './activity'
+export interface IActivitiesEnvelope {
+  activities: IActivity[],
+  activityCount: number
+}
 
 export interface IActivity {
   id: string,
