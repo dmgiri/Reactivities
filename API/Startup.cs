@@ -25,6 +25,7 @@ using System;
 using System.Threading.Tasks;
 using API.SignalR;
 using Application.Profiles;
+using Microsoft.Extensions.Logging;
 
 namespace API
 {
@@ -33,11 +34,32 @@ namespace API
     public Startup(IConfiguration configuration) => Configuration = configuration;
     public IConfiguration Configuration { get; }
 
+    // public void ConfigureDevelopmentService(IServiceCollection services) 
+    // {
+    //   services.AddDbContext<DataContext>(opt => { 
+    //     opt.UseLazyLoadingProxies(); 
+    //     opt.UseSqlite(Configuration.GetConnectionString("DefaultConnection")); 
+    //   });
+    //   ConfigureServices(services);
+    // }
+
+    // public void ConfigureProductionService(IServiceCollection services) 
+    // {
+    //   services.AddDbContext<DataContext>(opt => { 
+    //     opt.UseLazyLoadingProxies(); 
+    //     opt.UseMySql(Configuration.GetConnectionString("DefaultConnection")); 
+    //   });
+    //   ConfigureServices(services);
+    // }
+
     public void ConfigureServices(IServiceCollection services)
     {
-      services.AddDbContext<DataContext>(opt => { opt.UseLazyLoadingProxies(); opt.UseSqlite(Configuration.GetConnectionString("DefaultConnection")); });
+      services.AddDbContext<DataContext>(opt => { 
+        opt.UseLazyLoadingProxies(); 
+        opt.UseSqlite(Configuration.GetConnectionString("DefaultConnection")); 
+      });
       services.AddCors(opt => opt.AddPolicy("CorsPolicy", policy => { 
-        policy.AllowAnyHeader().AllowAnyMethod().WithOrigins("http://localhost:3000").AllowCredentials(); }));
+        policy.AllowAnyHeader().AllowAnyMethod().WithExposedHeaders("WWW-Authenticate").WithOrigins("http://localhost:3000").AllowCredentials(); }));
       services.AddMediatR(typeof(List.Handler).Assembly);
       services.AddAutoMapper(typeof(List.Handler));
       services.AddSignalR();
@@ -60,7 +82,8 @@ namespace API
       services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(opt =>
       {
         opt.TokenValidationParameters = new TokenValidationParameters
-        { ValidateIssuerSigningKey = true, IssuerSigningKey = key, ValidateAudience = false, ValidateIssuer = false };
+        { ValidateIssuerSigningKey = true, IssuerSigningKey = key, ValidateAudience = false, ValidateIssuer = false, 
+          ValidateLifetime = true, ClockSkew = TimeSpan.Zero };
         
         opt.Events = new JwtBearerEvents { OnMessageReceived = context => { 
           var accessToken = context.Request.Query["access_token"]; var path = context.HttpContext.Request.Path;
@@ -68,6 +91,7 @@ namespace API
           return Task.CompletedTask;
           }};
       });
+      services.AddLogging(options => options.AddConsole());
       services.AddScoped<IJwtGenerator, JwtGenerator>();
       services.AddScoped<IUserAccessor, UserAccessor>();
       services.AddScoped<IPhotoAccessor, PhotoAccessor>();
@@ -81,10 +105,12 @@ namespace API
     public void Configure(IApplicationBuilder app, IHostingEnvironment env)
     {
       app.UseMiddleware<ErrorHandlingMiddleware>();
+      app.UseDefaultFiles();
+      app.UseStaticFiles();
       app.UseAuthentication();
       app.UseCors("CorsPolicy");
       app.UseSignalR(routes => { routes.MapHub<ChatHub>("/chat"); });
-      app.UseMvc();
+      app.UseMvc(routes => { routes.MapSpaFallbackRoute(name: "spa-fallback", defaults: new {Controller = "Fallback", action = "Index"}); });
     }
   }
 }

@@ -32,6 +32,11 @@ namespace API
       host.Run();
     }
     
-    public static IWebHostBuilder CreateWebHostBuilder(string[] args) => WebHost.CreateDefaultBuilder(args).UseStartup<Startup>();
+    public static IWebHostBuilder CreateWebHostBuilder(string[] args) 
+    { 
+      return WebHost.CreateDefaultBuilder(args)
+        .ConfigureLogging(options => options.AddConsole())
+        .UseStartup<Startup>();
+    }
   }
 }

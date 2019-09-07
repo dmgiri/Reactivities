@@ -11,6 +11,7 @@ const HomePage: React.FC = () => {
   const rootStore = useContext(RootStoreContext)
   const { isLoggedIn, user } = rootStore.userStore
   const { openModal } = rootStore.modalStore
+  const token = window.localStorage.getItem('jwt')
 
   return (
     <Segment inverted textAlign="center" vertical className="masthead">
@@ -19,7 +20,7 @@ const HomePage: React.FC = () => {
           <Image size="massive" src="/assets/logo.png" alt="logo" style={{ marginBottom: 12 }}/>
           Reactivities
         </Header>
-        {isLoggedIn && user ?
+        {isLoggedIn && user && token ?
           (<Fragment>
             <Header as="h2" inverted content={`Welcome back ${user.displayName}`} />
             <Button as={Link} to="/activities" size="huge" inverted>Activities</Button>
