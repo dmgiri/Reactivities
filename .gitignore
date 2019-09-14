@@ -2,5 +2,7 @@ bin
 obj
 .vscode
 *.db
+appsettings.development.json
 appsettings.json
 wwwroot
+publish

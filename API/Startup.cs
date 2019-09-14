@@ -20,12 +20,10 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using AutoMapper;
 using Infrastructure.Photos;
-using Microsoft.AspNetCore.Http.Features;
 using System;
 using System.Threading.Tasks;
 using API.SignalR;
 using Application.Profiles;
-using Microsoft.Extensions.Logging;
 
 namespace API
 {
@@ -34,32 +32,19 @@ namespace API
     public Startup(IConfiguration configuration) => Configuration = configuration;
     public IConfiguration Configuration { get; }
 
-    // public void ConfigureDevelopmentService(IServiceCollection services) 
-    // {
-    //   services.AddDbContext<DataContext>(opt => { 
-    //     opt.UseLazyLoadingProxies(); 
-    //     opt.UseSqlite(Configuration.GetConnectionString("DefaultConnection")); 
-    //   });
-    //   ConfigureServices(services);
-    // }
-
-    // public void ConfigureProductionService(IServiceCollection services) 
-    // {
-    //   services.AddDbContext<DataContext>(opt => { 
-    //     opt.UseLazyLoadingProxies(); 
-    //     opt.UseMySql(Configuration.GetConnectionString("DefaultConnection")); 
-    //   });
-    //   ConfigureServices(services);
-    // }
-
     public void ConfigureServices(IServiceCollection services)
     {
       services.AddDbContext<DataContext>(opt => { 
         opt.UseLazyLoadingProxies(); 
-        opt.UseSqlite(Configuration.GetConnectionString("DefaultConnection")); 
+        opt.UseMySql(Configuration.GetConnectionString("MySQLConnection")); 
       });
-      services.AddCors(opt => opt.AddPolicy("CorsPolicy", policy => { 
-        policy.AllowAnyHeader().AllowAnyMethod().WithExposedHeaders("WWW-Authenticate").WithOrigins("http://localhost:3000").AllowCredentials(); }));
+      services.AddCors(opt => opt.AddPolicy("CorsPolicy", policy => { policy
+        .AllowAnyHeader()
+        .AllowAnyMethod()
+        .WithExposedHeaders("WWW-Authenticate")
+        .WithOrigins("http://localhost:3000")
+        .AllowCredentials(); 
+      }));
       services.AddMediatR(typeof(List.Handler).Assembly);
       services.AddAutoMapper(typeof(List.Handler));
       services.AddSignalR();
@@ -81,32 +66,54 @@ namespace API
       var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["TokenKey"]));
       services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(opt =>
       {
-        opt.TokenValidationParameters = new TokenValidationParameters
-        { ValidateIssuerSigningKey = true, IssuerSigningKey = key, ValidateAudience = false, ValidateIssuer = false, 
-          ValidateLifetime = true, ClockSkew = TimeSpan.Zero };
+        opt.TokenValidationParameters = new TokenValidationParameters { 
+          ValidateIssuerSigningKey = true, 
+          IssuerSigningKey = key, 
+          ValidateAudience = false, 
+          ValidateIssuer = false, 
+          ValidateLifetime = true, 
+          ClockSkew = TimeSpan.Zero 
+        };
         
         opt.Events = new JwtBearerEvents { OnMessageReceived = context => { 
-          var accessToken = context.Request.Query["access_token"]; var path = context.HttpContext.Request.Path;
+          var accessToken = context.Request.Query["access_token"]; 
+          var path = context.HttpContext.Request.Path;
           if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/chat")) { context.Token = accessToken; }
           return Task.CompletedTask;
           }};
       });
-      services.AddLogging(options => options.AddConsole());
+
       services.AddScoped<IJwtGenerator, JwtGenerator>();
       services.AddScoped<IUserAccessor, UserAccessor>();
       services.AddScoped<IPhotoAccessor, PhotoAccessor>();
       services.AddScoped<IProfileReader, ProfileReader>();
       services.Configure<CloudinarySettings>(Configuration.GetSection("Cloudinary"));
-
-      services.Configure<FormOptions>(options => { options.BufferBody = true; options.ValueLengthLimit = Int32.MaxValue; 
-        options.MultipartBodyLengthLimit = Int32.MaxValue; options.MemoryBufferThreshold = Int32.MaxValue; });
     }
 
     public void Configure(IApplicationBuilder app, IHostingEnvironment env)
     {
+      if (env.IsDevelopment()) { app.UseDeveloperExceptionPage(); } else { app.UseHsts(); }
       app.UseMiddleware<ErrorHandlingMiddleware>();
+
+      app.UseHttpsRedirection();
+      app.UseReferrerPolicy(opt => opt.NoReferrer());
+      app.UseNoCacheHttpHeaders();
+      app.UseXContentTypeOptions();
+      app.UseXXssProtection(opt => opt.EnabledWithBlockMode());
+      app.UseXfo(opt => opt.Deny());
+      app.UseCsp(opt => opt 
+        .BlockAllMixedContent()
+        .StyleSources(s => s.Self().CustomSources("http://fonts.googleapis.com", "sha256-F4GpCPyRepgP5znjMD8sc7PEjzet5Eef4r09dEGPpTs="))
+        .FontSources(s => s.Self().CustomSources("https://fonts.gstatic.com", "data:"))
+        .FormActions(s => s.Self())
+        .FrameAncestors(s => s.Self())
+        .ImageSources(s => s.Self().CustomSources("https://res.cloudinary.com", "blob:", "data:"))
+        .ScriptSources(s => s.Self().CustomSources("sha256-EWcbgMMrMgeuxsyT4o76Gq/C5zilrLxiq6oTo2KDqus=")) 
+      );
+      
       app.UseDefaultFiles();
       app.UseStaticFiles();
+      app.UseRedirectValidation(opts => { opts.AllowSameHostRedirectsToHttps(); });
       app.UseAuthentication();
       app.UseCors("CorsPolicy");
       app.UseSignalR(routes => { routes.MapHub<ChatHub>("/chat"); });
@@ -116,5 +123,5 @@ namespace API
 }
 
 // notes:
-// if (env.IsDevelopment()) { app.UseDeveloperExceptionPage(); } else {}  // app.UseHsts(); 
-// app.UseHttpsRedirection();
+// services.Configure<FormOptions>(options => { options.BufferBody = true; options.ValueLengthLimit = Int32.MaxValue; 
+//         options.MultipartBodyLengthLimit = Int32.MaxValue; options.MemoryBufferThreshold = Int32.MaxValue; });

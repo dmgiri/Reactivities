@@ -35,7 +35,8 @@ namespace API
     public static IWebHostBuilder CreateWebHostBuilder(string[] args) 
     { 
       return WebHost.CreateDefaultBuilder(args)
-        .ConfigureLogging(options => options.AddConsole())
+        .ConfigureLogging((HostingContext, options) => options.AddConfiguration(HostingContext.Configuration.GetSection("Logging")).AddConsole())
+        .UseKestrel(x => x.AddServerHeader = false)
         .UseStartup<Startup>();
     }
   }
