@@ -28,7 +28,7 @@ const HomePage: React.FC = () => {
           (<Fragment>
             <Header as="h2" inverted content="Welcome to Reactivities" />
             <Button onClick={() => openModal(<LoginForm />)} size="huge" inverted>Login</Button>
-            <Button onClick={() => openModal(<RegisterForm />)} size="huge" inverted>Register</Button>
+            <Button disabled={true} onClick={() => openModal(<RegisterForm />)} size="huge" inverted>Register</Button>
           </Fragment>)
         }
       </Container>

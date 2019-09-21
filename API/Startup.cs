@@ -36,7 +36,7 @@ namespace API
     {
       services.AddDbContext<DataContext>(opt => { 
         opt.UseLazyLoadingProxies(); 
-        opt.UseMySql(Configuration.GetConnectionString("MySQLConnection")); 
+        opt.UseNpgsql(Configuration.GetConnectionString("PostgresConnection")); 
       });
       services.AddCors(opt => opt.AddPolicy("CorsPolicy", policy => { policy
         .AllowAnyHeader()
@@ -92,9 +92,10 @@ namespace API
 
     public void Configure(IApplicationBuilder app, IHostingEnvironment env)
     {
-      if (env.IsDevelopment()) { app.UseDeveloperExceptionPage(); } else { app.UseHsts(); }
+      if (env.IsDevelopment()) { app.UseDeveloperExceptionPage(); }
       app.UseMiddleware<ErrorHandlingMiddleware>();
 
+      app.UseHsts();
       app.UseHttpsRedirection();
       app.UseReferrerPolicy(opt => opt.NoReferrer());
       app.UseNoCacheHttpHeaders();
